@@ -1,0 +1,1319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Home Assets">
+<title>Home Assets</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<style>
+:root {
+  --bg: #0F0F0F;
+  --bg2: #1A1A1A;
+  --bg3: #222222;
+  --border: #2E2E2E;
+  --border2: #3A3A3A;
+  --text: #F0EDE8;
+  --text2: #9A9690;
+  --text3: #5A5652;
+  --accent: #C8F563;
+  --accent-dim: rgba(200,245,99,0.12);
+  --accent-text: #1A2800;
+  --red: #FF5C5C;
+  --red-dim: rgba(255,92,92,0.12);
+  --amber: #F5A623;
+  --amber-dim: rgba(245,166,35,0.12);
+  --radius: 16px;
+  --radius-sm: 10px;
+  --font: 'Sora', sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow-x: hidden;
+}
+
+/* ── Auth screen ── */
+#authScreen {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 32px;
+  text-align: center;
+  background: var(--bg);
+}
+
+.auth-mark {
+  width: 72px; height: 72px;
+  border-radius: 20px;
+  background: var(--accent-dim);
+  border: 1px solid rgba(200,245,99,0.3);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 32px;
+  margin: 0 auto 28px;
+}
+
+.auth-title {
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: -0.5px;
+  margin-bottom: 10px;
+  color: var(--text);
+}
+
+.auth-sub {
+  font-size: 14px;
+  color: var(--text2);
+  line-height: 1.6;
+  max-width: 280px;
+  margin: 0 auto 36px;
+}
+
+.auth-sub strong { color: var(--accent); font-weight: 500; }
+
+.google-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--text);
+  color: #111;
+  border: none;
+  border-radius: 50px;
+  padding: 14px 28px;
+  font-family: var(--font);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s, transform 0.1s;
+  margin: 0 auto;
+}
+.google-btn:active { transform: scale(0.97); opacity: 0.9; }
+
+.google-icon {
+  width: 20px; height: 20px; flex-shrink: 0;
+}
+
+.auth-note {
+  margin-top: 24px;
+  font-size: 12px;
+  color: var(--text3);
+  font-family: var(--mono);
+  line-height: 1.6;
+}
+
+.auth-error {
+  margin-top: 16px;
+  padding: 12px 16px;
+  background: var(--red-dim);
+  border: 1px solid rgba(255,92,92,0.3);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  color: var(--red);
+  display: none;
+  max-width: 320px;
+}
+
+/* ── Config screen ── */
+#configScreen {
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 40px 24px; text-align: center;
+}
+
+.config-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px 24px;
+  width: 100%; max-width: 380px;
+  text-align: left;
+}
+
+.config-card h2 { font-size: 18px; font-weight: 600; margin-bottom: 6px; }
+.config-card p { font-size: 13px; color: var(--text2); line-height: 1.6; margin-bottom: 20px; }
+
+/* ── Main App ── */
+#mainApp { display: none; flex-direction: column; height: 100vh; height: 100dvh; }
+
+/* ── Header ── */
+.header {
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  padding: 16px 16px 12px;
+  position: sticky; top: 0; z-index: 100;
+  padding-top: max(16px, env(safe-area-inset-top));
+}
+
+.header-top {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.logo {
+  font-size: 17px; font-weight: 600;
+  letter-spacing: -0.3px;
+  display: flex; align-items: center; gap: 8px;
+}
+
+.logo-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--accent);
+}
+
+.user-row {
+  display: flex; align-items: center; gap: 8px;
+}
+
+.user-avatar {
+  width: 30px; height: 30px; border-radius: 50%;
+  background: var(--bg3); border: 1px solid var(--border2);
+  overflow: hidden; display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 600; color: var(--accent);
+  cursor: pointer;
+}
+
+.user-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+.icon-btn {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: var(--bg3); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 14px;
+  transition: background 0.15s, border-color 0.15s;
+  color: var(--text2);
+}
+.icon-btn:active { background: var(--border2); }
+
+.search-wrap { position: relative; }
+
+.search-input {
+  width: 100%;
+  padding: 10px 36px 10px 14px;
+  background: var(--bg2);
+  border: 1.5px solid var(--border);
+  border-radius: 50px;
+  font-family: var(--font);
+  font-size: 14px; color: var(--text);
+  outline: none;
+  transition: border-color 0.2s;
+}
+.search-input:focus { border-color: var(--accent); }
+.search-input::placeholder { color: var(--text3); }
+
+.search-clear {
+  position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+  background: none; border: none; color: var(--text3); cursor: pointer;
+  font-size: 14px; display: none; padding: 4px;
+}
+
+/* ── Filter chips ── */
+.filter-bar {
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+}
+
+.filter-scroll {
+  display: flex; gap: 6px;
+  padding: 10px 16px;
+  overflow-x: auto; scrollbar-width: none;
+}
+.filter-scroll::-webkit-scrollbar { display: none; }
+
+.chip {
+  flex-shrink: 0;
+  padding: 5px 13px;
+  border-radius: 50px;
+  border: 1px solid var(--border2);
+  background: transparent;
+  font-family: var(--font);
+  font-size: 12px; font-weight: 500;
+  color: var(--text2);
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.chip.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-text);
+}
+.chip:not(.active):active { background: var(--bg3); }
+
+/* ── Stats ── */
+.stats {
+  display: grid; grid-template-columns: 1fr 1fr 1fr;
+  gap: 1px; background: var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.stat {
+  background: var(--bg);
+  padding: 12px 8px; text-align: center;
+}
+.stat-val {
+  font-size: 18px; font-weight: 600;
+  color: var(--text); letter-spacing: -0.5px;
+  font-family: var(--mono);
+}
+.stat-lbl { font-size: 10px; color: var(--text3); margin-top: 2px; text-transform: uppercase; letter-spacing: 0.8px; }
+
+/* ── Content ── */
+.content {
+  flex: 1; overflow-y: auto;
+  padding: 12px 16px 120px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.toolbar {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 12px;
+}
+.results-lbl { font-size: 11px; color: var(--text3); font-family: var(--mono); }
+.sort-sel {
+  background: var(--bg2); border: 1px solid var(--border);
+  color: var(--text2); font-family: var(--font); font-size: 12px;
+  padding: 5px 10px; border-radius: 50px; outline: none; cursor: pointer;
+  appearance: none;
+}
+
+.section-label {
+  font-size: 10px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 1.2px;
+  color: var(--text3); margin: 16px 0 8px;
+  display: flex; align-items: center; gap: 8px;
+}
+.section-label::after {
+  content: ''; flex: 1; height: 1px; background: var(--border);
+}
+
+/* ── Item card ── */
+.card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+  margin-bottom: 6px;
+  display: flex; align-items: center; gap: 12px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+  position: relative;
+  overflow: hidden;
+}
+.card:active { background: var(--bg3); border-color: var(--border2); }
+
+.card-accent {
+  position: absolute; left: 0; top: 0; bottom: 0;
+  width: 2px;
+}
+
+.card-thumb {
+  width: 44px; height: 44px; border-radius: 8px;
+  background: var(--bg3); border: 1px solid var(--border2);
+  flex-shrink: 0; overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+}
+.card-thumb img { width: 100%; height: 100%; object-fit: cover; }
+
+.card-body { flex: 1; min-width: 0; }
+.card-name {
+  font-size: 14px; font-weight: 600; color: var(--text);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  margin-bottom: 4px;
+}
+.card-tags { display: flex; gap: 5px; flex-wrap: wrap; }
+.tag {
+  font-size: 10px; font-weight: 500;
+  padding: 2px 7px; border-radius: 50px;
+}
+.tag-room { background: var(--bg3); color: var(--text2); border: 1px solid var(--border2); }
+.tag-cat { background: var(--accent-dim); color: var(--accent); border: 1px solid rgba(200,245,99,0.2); }
+.card-serial { font-size: 10px; color: var(--text3); font-family: var(--mono); margin-top: 3px; }
+
+.card-value {
+  font-family: var(--mono);
+  font-size: 13px; font-weight: 500;
+  color: var(--text); flex-shrink: 0;
+}
+
+/* category accent colors */
+.acc-electronics { background: #C8F563; }
+.acc-furniture    { background: #F5A623; }
+.acc-appliances   { background: #63C8F5; }
+.acc-clothing     { background: #C563F5; }
+.acc-tools        { background: #F56363; }
+.acc-jewellery    { background: #F5D063; }
+.acc-sports       { background: #63F5A0; }
+.acc-books        { background: #63A0F5; }
+.acc-art          { background: #F563C8; }
+.acc-other        { background: #888; }
+
+/* ── Empty state ── */
+.empty {
+  text-align: center; padding: 60px 24px;
+}
+.empty-icon { font-size: 44px; margin-bottom: 14px; opacity: 0.3; }
+.empty-title { font-size: 16px; font-weight: 600; color: var(--text2); margin-bottom: 6px; }
+.empty-sub { font-size: 13px; color: var(--text3); line-height: 1.6; }
+
+/* ── FAB ── */
+.fab {
+  position: fixed; bottom: 32px; right: 20px;
+  width: 56px; height: 56px; border-radius: 50%;
+  background: var(--accent); color: var(--accent-text);
+  font-size: 24px; font-weight: 400;
+  border: none; cursor: pointer;
+  box-shadow: 0 4px 24px rgba(200,245,99,0.35);
+  display: flex; align-items: center; justify-content: center;
+  transition: transform 0.2s, box-shadow 0.2s;
+  z-index: 200;
+}
+.fab:active { transform: scale(0.92); box-shadow: 0 2px 12px rgba(200,245,99,0.25); }
+
+/* ── Modals ── */
+.overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.7);
+  z-index: 300;
+  display: flex; align-items: flex-end;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.25s;
+}
+.overlay.open { opacity: 1; pointer-events: all; }
+
+.sheet {
+  background: var(--bg2);
+  border-radius: 24px 24px 0 0;
+  width: 100%;
+  max-height: 93vh;
+  overflow-y: auto;
+  transform: translateY(100%);
+  transition: transform 0.3s cubic-bezier(0.32,0.72,0,1);
+  padding-bottom: max(24px, env(safe-area-inset-bottom));
+}
+.overlay.open .sheet { transform: translateY(0); }
+
+.sheet-handle {
+  width: 32px; height: 3px;
+  background: var(--border2); border-radius: 2px;
+  margin: 12px auto 0;
+}
+
+.sheet-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 20px 8px;
+}
+.sheet-title { font-size: 17px; font-weight: 600; }
+.sheet-close {
+  width: 30px; height: 30px; border-radius: 50%;
+  background: var(--bg3); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 14px; color: var(--text2);
+}
+
+.sheet-body { padding: 4px 20px 20px; }
+
+/* ── Form ── */
+.fg { margin-bottom: 14px; }
+.fl {
+  display: block;
+  font-size: 10px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 1px;
+  color: var(--text3); margin-bottom: 6px;
+}
+.fi, .fs, .fta {
+  width: 100%;
+  padding: 11px 14px;
+  background: var(--bg3);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-family: var(--font); font-size: 14px;
+  color: var(--text); outline: none;
+  transition: border-color 0.2s;
+  appearance: none;
+}
+.fi:focus, .fs:focus, .fta:focus { border-color: var(--accent); }
+.fi::placeholder, .fta::placeholder { color: var(--text3); }
+.fta { resize: vertical; min-height: 72px; }
+
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+.photo-zone {
+  border: 1.5px dashed var(--border2);
+  border-radius: var(--radius-sm);
+  padding: 18px 12px;
+  text-align: center; cursor: pointer;
+  position: relative;
+  transition: border-color 0.2s;
+}
+.photo-zone:active { border-color: var(--accent); }
+.photo-zone input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+.photo-zone-icon { font-size: 24px; opacity: 0.3; margin-bottom: 5px; }
+.photo-zone-text { font-size: 12px; color: var(--text3); }
+.photo-prev {
+  width: 72px; height: 72px; border-radius: 8px;
+  object-fit: cover; border: 1px solid var(--border);
+  display: none; margin: 0 auto 8px;
+}
+
+.btn {
+  width: 100%; padding: 13px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font); font-size: 14px; font-weight: 600;
+  border: none; cursor: pointer;
+  transition: opacity 0.15s, transform 0.1s;
+}
+.btn:active { transform: scale(0.98); opacity: 0.85; }
+.btn-primary { background: var(--accent); color: var(--accent-text); }
+.btn-danger { background: var(--red-dim); color: var(--red); border: 1px solid rgba(255,92,92,0.2); margin-top: 8px; }
+.btn-ghost { background: var(--bg3); color: var(--text2); border: 1px solid var(--border); margin-top: 8px; }
+
+/* ── Detail sheet ── */
+.detail-img {
+  width: 100%; max-height: 200px; object-fit: cover;
+  border-radius: var(--radius-sm); margin-bottom: 16px; display: none;
+}
+.detail-name { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
+.detail-value {
+  font-family: var(--mono); font-size: 22px; font-weight: 500;
+  color: var(--accent); margin-bottom: 16px;
+}
+.detail-row {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  padding: 11px 0; border-bottom: 1px solid var(--border);
+}
+.detail-row:last-of-type { border-bottom: none; }
+.detail-lbl { font-size: 12px; color: var(--text3); }
+.detail-val { font-size: 13px; color: var(--text); font-weight: 500; text-align: right; max-width: 58%; word-break: break-word; }
+
+/* ── Sync indicator ── */
+.sync-pill {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 10px; font-family: var(--mono);
+  color: var(--text3); padding: 3px 10px;
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: 50px;
+}
+.sync-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--text3);
+}
+.sync-dot.ok { background: var(--accent); }
+.sync-dot.err { background: var(--red); }
+.sync-dot.busy {
+  background: var(--amber);
+  animation: pulse 1s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+/* ── Toast ── */
+.toast {
+  position: fixed; bottom: 104px; left: 50%;
+  transform: translateX(-50%) translateY(16px);
+  background: var(--bg3); color: var(--text);
+  border: 1px solid var(--border2);
+  padding: 9px 18px; border-radius: 50px;
+  font-size: 13px; font-weight: 500;
+  opacity: 0; transition: opacity 0.2s, transform 0.2s;
+  z-index: 500; white-space: nowrap; pointer-events: none;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ── Loading ── */
+.loader {
+  position: fixed; inset: 0;
+  background: var(--bg);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 16px; z-index: 999;
+  font-size: 13px; color: var(--text3);
+}
+.loader-ring {
+  width: 32px; height: 32px;
+  border: 2px solid var(--border2);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── User menu ── */
+.user-menu {
+  position: fixed; top: max(60px, calc(env(safe-area-inset-top) + 44px));
+  right: 16px; z-index: 400;
+  background: var(--bg2); border: 1px solid var(--border2);
+  border-radius: var(--radius-sm); padding: 8px;
+  min-width: 200px;
+  opacity: 0; pointer-events: none;
+  transform: translateY(-8px);
+  transition: opacity 0.15s, transform 0.15s;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+}
+.user-menu.open { opacity: 1; pointer-events: all; transform: translateY(0); }
+.menu-user-info { padding: 8px 10px 10px; border-bottom: 1px solid var(--border); margin-bottom: 6px; }
+.menu-name { font-size: 13px; font-weight: 600; }
+.menu-email { font-size: 11px; color: var(--text3); font-family: var(--mono); margin-top: 2px; }
+.menu-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 10px; border-radius: 6px;
+  font-size: 13px; color: var(--text2); cursor: pointer;
+  transition: background 0.1s;
+}
+.menu-item:active { background: var(--bg3); }
+.menu-item.danger { color: var(--red); }
+</style>
+</head>
+<body>
+
+<!-- Loading -->
+<div class="loader" id="loader">
+  <div class="loader-ring"></div>
+  <span>Loading…</span>
+</div>
+
+<!-- Auth Screen -->
+<div id="authScreen" style="display:none">
+  <div class="auth-mark">🏠</div>
+  <h1 class="auth-title">Home Assets</h1>
+  <p class="auth-sub">Sign in with a Google account that has been <strong>granted access</strong> to the shared spreadsheet.</p>
+  <button class="google-btn" onclick="signIn()">
+    <svg class="google-icon" viewBox="0 0 24 24">
+      <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+      <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+      <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/>
+      <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+    </svg>
+    Sign in with Google
+  </button>
+  <div class="auth-error" id="authError"></div>
+  <p class="auth-note">Only authorised accounts can access this app.<br>Contact the owner to request access.</p>
+</div>
+
+<!-- Config Screen (first-time setup) -->
+<div id="configScreen" style="display:none">
+  <div class="config-card">
+    <h2>One-time setup</h2>
+    <p>Paste your Google OAuth Client ID and Spreadsheet ID to connect the app to your private Google Sheet.</p>
+    <div class="fg">
+      <label class="fl">OAuth Client ID</label>
+      <input class="fi" id="cfgClientId" type="text" placeholder="xxxx.apps.googleusercontent.com">
+    </div>
+    <div class="fg">
+      <label class="fl">Spreadsheet ID</label>
+      <input class="fi" id="cfgSheetId" type="text" placeholder="From the sheet URL">
+    </div>
+    <button class="btn btn-primary" onclick="saveConfig()">Save & continue</button>
+    <div style="margin-top:16px; padding:12px; background:var(--bg3); border-radius:var(--radius-sm); font-size:12px; color:var(--text3); line-height:1.7;">
+      <strong style="color:var(--text2)">Setup guide:</strong><br>
+      1. Go to <strong style="color:var(--text2)">console.cloud.google.com</strong><br>
+      2. Create project → Enable Google Sheets API<br>
+      3. Credentials → Create OAuth Client ID → Web application<br>
+      4. Add your hosted URL to Authorised origins<br>
+      5. Copy the Client ID above<br>
+      6. Create a Google Sheet, copy the ID from the URL<br>
+      7. Share the sheet with allowed Google accounts only
+    </div>
+  </div>
+</div>
+
+<!-- Main App -->
+<div id="mainApp">
+
+  <div class="header">
+    <div class="header-top">
+      <div class="logo">
+        <div class="logo-dot"></div>
+        home assets
+      </div>
+      <div class="user-row">
+        <div id="syncIndicator" class="sync-pill">
+          <div class="sync-dot" id="syncDot"></div>
+          <span id="syncLabel">–</span>
+        </div>
+        <div class="user-avatar" id="userAvatar" onclick="toggleMenu()">?</div>
+      </div>
+    </div>
+    <div class="search-wrap">
+      <input class="search-input" id="searchInput" type="search" placeholder="Search items, rooms, brands…" oninput="handleSearch(this.value)">
+      <button class="search-clear" id="searchClear" onclick="clearSearch()">✕</button>
+    </div>
+  </div>
+
+  <!-- Filter chips -->
+  <div class="filter-bar">
+    <div class="filter-scroll" id="filterScroll">
+      <div class="chip active" data-f="all" onclick="setFilter('all',this)">All</div>
+      <div class="chip" data-f="room:Bathroom" onclick="setFilter('room:Bathroom',this)">🚿 Bathroom</div>
+      <div class="chip" data-f="room:Laundry" onclick="setFilter('room:Laundry',this)">🧺 Laundry</div>
+      <div class="chip" data-f="room:Spare Room" onclick="setFilter('room:Spare Room',this)">🛏 Spare Room</div>
+      <div class="chip" data-f="room:Bedroom" onclick="setFilter('room:Bedroom',this)">🛌 Bedroom</div>
+      <div class="chip" data-f="room:Kitchen" onclick="setFilter('room:Kitchen',this)">🍳 Kitchen</div>
+      <div class="chip" data-f="room:Living Room" onclick="setFilter('room:Living Room',this)">🛋 Living Room</div>
+      <div class="chip" data-f="cat:Electronics" onclick="setFilter('cat:Electronics',this)">Electronics</div>
+      <div class="chip" data-f="cat:Furniture" onclick="setFilter('cat:Furniture',this)">Furniture</div>
+      <div class="chip" data-f="cat:Appliances" onclick="setFilter('cat:Appliances',this)">Appliances</div>
+      <div class="chip" data-f="cat:Clothing" onclick="setFilter('cat:Clothing',this)">Clothing</div>
+      <div class="chip" data-f="cat:Tools" onclick="setFilter('cat:Tools',this)">Tools</div>
+      <div class="chip" data-f="cat:Jewellery" onclick="setFilter('cat:Jewellery',this)">Jewellery</div>
+      <div class="chip" data-f="cat:Sports" onclick="setFilter('cat:Sports',this)">Sports</div>
+      <div class="chip" data-f="cat:Books" onclick="setFilter('cat:Books',this)">Books</div>
+      <div class="chip" data-f="cat:Art" onclick="setFilter('cat:Art',this)">Art</div>
+      <div class="chip" data-f="cat:Other" onclick="setFilter('cat:Other',this)">Other</div>
+    </div>
+  </div>
+
+  <!-- Stats bar -->
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-val" id="sTotal">0</div>
+      <div class="stat-lbl">Items</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val" id="sValue">$0</div>
+      <div class="stat-lbl">Est. value</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val" id="sRooms">0</div>
+      <div class="stat-lbl">Rooms</div>
+    </div>
+  </div>
+
+  <!-- Item list -->
+  <div class="content">
+    <div class="toolbar">
+      <span class="results-lbl" id="resultsLbl"></span>
+      <select class="sort-sel" onchange="setSort(this.value)">
+        <option value="name">A → Z</option>
+        <option value="value-desc">Value ↓</option>
+        <option value="value-asc">Value ↑</option>
+        <option value="newest">Newest</option>
+        <option value="room">By room</option>
+      </select>
+    </div>
+    <div id="list"></div>
+  </div>
+
+</div>
+
+<!-- FAB -->
+<button class="fab" id="fab" onclick="openAdd()" style="display:none">+</button>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- User menu -->
+<div class="user-menu" id="userMenu">
+  <div class="menu-user-info">
+    <div class="menu-name" id="menuName">–</div>
+    <div class="menu-email" id="menuEmail">–</div>
+  </div>
+  <div class="menu-item" onclick="exportCSV(); toggleMenu()">
+    <span>↓</span> Export CSV
+  </div>
+  <div class="menu-item" onclick="refreshFromSheet(); toggleMenu()">
+    <span>↻</span> Sync now
+  </div>
+  <div class="menu-item danger" onclick="signOut()">
+    <span>→</span> Sign out
+  </div>
+</div>
+
+<!-- Add / Edit sheet -->
+<div class="overlay" id="addOverlay">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-header">
+      <div class="sheet-title" id="addTitle">New item</div>
+      <div class="sheet-close" onclick="closeOverlay('addOverlay')">✕</div>
+    </div>
+    <div class="sheet-body">
+      <div class="fg">
+        <div class="photo-zone" id="photoZone">
+          <img class="photo-prev" id="photoPrev" alt="">
+          <div class="photo-zone-icon">📷</div>
+          <div class="photo-zone-text">Tap to add photo (optional)</div>
+          <input type="file" accept="image/*" onchange="handlePhoto(this)">
+        </div>
+      </div>
+      <div class="fg">
+        <label class="fl">Item name *</label>
+        <input class="fi" id="fName" type="text" placeholder="e.g. Samsung 55″ TV">
+      </div>
+      <div class="form-row">
+        <div class="fg">
+          <label class="fl">Room *</label>
+          <select class="fs" id="fRoom">
+            <option value="">Select…</option>
+            <option>Bathroom</option>
+            <option>Laundry</option>
+            <option>Spare Room</option>
+            <option>Bedroom</option>
+            <option>Kitchen</option>
+            <option>Living Room</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label class="fl">Category *</label>
+          <select class="fs" id="fCat">
+            <option value="">Select…</option>
+            <option>Electronics</option>
+            <option>Furniture</option>
+            <option>Appliances</option>
+            <option>Clothing</option>
+            <option>Tools</option>
+            <option>Jewellery</option>
+            <option>Sports</option>
+            <option>Books</option>
+            <option>Art</option>
+            <option>Other</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="fg">
+          <label class="fl">Est. value (AUD)</label>
+          <input class="fi" id="fValue" type="number" placeholder="0" min="0" step="1">
+        </div>
+        <div class="fg">
+          <label class="fl">Purchase date</label>
+          <input class="fi" id="fDate" type="date">
+        </div>
+      </div>
+      <div class="fg">
+        <label class="fl">Brand / Make</label>
+        <input class="fi" id="fBrand" placeholder="e.g. Samsung">
+      </div>
+      <div class="fg">
+        <label class="fl">Serial / Model no.</label>
+        <input class="fi" id="fSerial" placeholder="e.g. SN-12345678">
+      </div>
+      <div class="fg">
+        <label class="fl">Notes</label>
+        <textarea class="fta" id="fNotes" placeholder="Warranty, condition, where purchased…"></textarea>
+      </div>
+      <button class="btn btn-primary" id="saveBtn" onclick="saveItem()">Save item</button>
+      <button class="btn btn-danger" id="deleteBtn" onclick="deleteItem()" style="display:none">Delete item</button>
+      <button class="btn btn-ghost" onclick="closeOverlay('addOverlay')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Detail sheet -->
+<div class="overlay" id="detailOverlay">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-header">
+      <div class="sheet-title" id="detailSheetTitle">Details</div>
+      <div class="sheet-close" onclick="closeOverlay('detailOverlay')">✕</div>
+    </div>
+    <div class="sheet-body" id="detailBody"></div>
+  </div>
+</div>
+
+<script>
+// ── Config ──
+const CFG_KEY = 'homeAssets_cfg';
+const DATA_KEY = 'homeAssets_data';
+const SHEET_RANGE = 'Sheet1';
+const CAT_EMOJI = {Electronics:'💻',Furniture:'🪑',Appliances:'🔌',Clothing:'👗',Tools:'🔧',Jewellery:'💍',Sports:'⚽',Books:'📚',Art:'🖼',Other:'📦'};
+
+let cfg = JSON.parse(localStorage.getItem(CFG_KEY) || '{}');
+let items = JSON.parse(localStorage.getItem(DATA_KEY) || '[]');
+let accessToken = null;
+let currentUser = null;
+let editingId = null;
+let photoData = null;
+let currentFilter = 'all';
+let currentSort = 'name';
+let currentSearch = '';
+
+// ── Boot ──
+window.addEventListener('load', () => {
+  if (!cfg.clientId || !cfg.sheetId) {
+    hide('loader'); show('configScreen'); return;
+  }
+  initGoogleAuth();
+});
+
+function initGoogleAuth() {
+  // Wait for GSI to load
+  const wait = setInterval(() => {
+    if (window.google?.accounts?.oauth2) {
+      clearInterval(wait);
+      startAuthFlow();
+    }
+  }, 100);
+  setTimeout(() => clearInterval(wait), 10000);
+}
+
+function startAuthFlow() {
+  // Try silent sign-in first via token client
+  const client = google.accounts.oauth2.initTokenClient({
+    client_id: cfg.clientId,
+    scope: 'https://www.googleapis.com/auth/spreadsheets',
+    prompt: '',
+    callback: handleToken,
+  });
+  // Attempt to get token without prompt (will fail silently if not cached)
+  client.requestAccessToken({ prompt: '' });
+  // Show auth screen after brief delay if no token arrives
+  setTimeout(() => {
+    if (!accessToken) {
+      hide('loader'); show('authScreen');
+    }
+  }, 1500);
+}
+
+function signIn() {
+  showAuthError('');
+  const client = google.accounts.oauth2.initTokenClient({
+    client_id: cfg.clientId,
+    scope: 'https://www.googleapis.com/auth/spreadsheets',
+    callback: handleToken,
+  });
+  client.requestAccessToken({ prompt: 'select_account' });
+}
+
+async function handleToken(response) {
+  if (response.error) {
+    hide('loader');
+    showAuthError('Sign-in failed: ' + (response.error_description || response.error));
+    show('authScreen');
+    return;
+  }
+  accessToken = response.access_token;
+
+  // Get user profile
+  try {
+    const r = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+      headers: { Authorization: 'Bearer ' + accessToken }
+    });
+    currentUser = await r.json();
+  } catch {}
+
+  hide('authScreen'); hide('loader');
+  show('mainApp');
+  document.getElementById('fab').style.display = 'flex';
+  setupUserUI();
+  setSyncState('busy', 'Syncing…');
+  await refreshFromSheet();
+}
+
+function setupUserUI() {
+  if (!currentUser) return;
+  const av = document.getElementById('userAvatar');
+  if (currentUser.picture) {
+    av.innerHTML = `<img src="${currentUser.picture}" alt="">`;
+  } else {
+    av.textContent = (currentUser.name || '?')[0].toUpperCase();
+  }
+  document.getElementById('menuName').textContent = currentUser.name || '–';
+  document.getElementById('menuEmail').textContent = currentUser.email || '–';
+}
+
+function signOut() {
+  google.accounts.oauth2.revoke(accessToken, () => {});
+  accessToken = null; currentUser = null;
+  toggleMenu();
+  hide('mainApp');
+  document.getElementById('fab').style.display = 'none';
+  show('authScreen');
+}
+
+// ── Config save ──
+function saveConfig() {
+  const cid = document.getElementById('cfgClientId').value.trim();
+  const sid = document.getElementById('cfgSheetId').value.trim();
+  if (!cid || !sid) { alert('Please fill in both fields.'); return; }
+  cfg = { clientId: cid, sheetId: sid };
+  localStorage.setItem(CFG_KEY, JSON.stringify(cfg));
+  hide('configScreen');
+  hide('loader');
+  // Reload to re-init with new config
+  location.reload();
+}
+
+// ── Sheets API ──
+const sheetsBase = () => `https://sheets.googleapis.com/v4/spreadsheets/${cfg.sheetId}`;
+
+async function refreshFromSheet() {
+  setSyncState('busy', 'Syncing…');
+  try {
+    const res = await fetch(
+      `${sheetsBase()}/values/${SHEET_RANGE}?majorDimension=ROWS`,
+      { headers: { Authorization: 'Bearer ' + accessToken } }
+    );
+    if (res.status === 401) { setSyncState('err', 'Auth error'); return; }
+    if (res.status === 403) { setSyncState('err', 'No access'); showToast('❌ This account has no sheet access'); return; }
+    const data = await res.json();
+    const rows = (data.values || []).slice(1); // skip header row
+    items = rows.map(r => ({
+      id: r[0]||'', name: r[1]||'', room: r[2]||'',
+      category: r[3]||'', value: parseFloat(r[4])||0,
+      brand: r[5]||'', serial: r[6]||'',
+      date: r[7]||'', notes: r[8]||'',
+      photo: r[9]||'', dateAdded: r[10]||''
+    })).filter(i => i.id && i.name);
+    localStorage.setItem(DATA_KEY, JSON.stringify(items));
+    setSyncState('ok', 'Synced');
+    renderList();
+  } catch (e) {
+    setSyncState('err', 'Offline');
+    renderList(); // show cached data
+  }
+}
+
+async function writeAllToSheet() {
+  setSyncState('busy', 'Saving…');
+  const header = [['ID','Name','Room','Category','Value','Brand','Serial','Date','Notes','Photo','DateAdded']];
+  const rows = items.map(i => [
+    i.id, i.name, i.room, i.category,
+    i.value||0, i.brand||'', i.serial||'',
+    i.date||'', i.notes||'', i.photo||'', i.dateAdded||''
+  ]);
+  const body = { values: [...header, ...rows] };
+  try {
+    const res = await fetch(
+      `${sheetsBase()}/values/${SHEET_RANGE}!A1?valueInputOption=RAW`,
+      {
+        method: 'PUT',
+        headers: {
+          Authorization: 'Bearer ' + accessToken,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(body)
+      }
+    );
+    if (res.ok) {
+      setSyncState('ok', 'Saved');
+      localStorage.setItem(DATA_KEY, JSON.stringify(items));
+    } else {
+      setSyncState('err', 'Save failed');
+    }
+  } catch {
+    setSyncState('err', 'Offline');
+  }
+}
+
+// ── Sync state ──
+function setSyncState(state, label) {
+  const dot = document.getElementById('syncDot');
+  const lbl = document.getElementById('syncLabel');
+  dot.className = 'sync-dot ' + state;
+  lbl.textContent = label;
+}
+
+// ── Render ──
+function getFiltered() {
+  let r = [...items];
+  if (currentSearch) {
+    const q = currentSearch.toLowerCase();
+    r = r.filter(i =>
+      [i.name,i.room,i.category,i.brand,i.serial,i.notes]
+        .some(v => v?.toLowerCase().includes(q))
+    );
+  }
+  if (currentFilter !== 'all') {
+    const [type, val] = currentFilter.split(':');
+    r = r.filter(i => (type === 'room' ? i.room : i.category) === val);
+  }
+  r.sort((a,b) => {
+    if (currentSort === 'name') return a.name.localeCompare(b.name);
+    if (currentSort === 'value-desc') return (b.value||0)-(a.value||0);
+    if (currentSort === 'value-asc') return (a.value||0)-(b.value||0);
+    if (currentSort === 'newest') return (b.dateAdded||'').localeCompare(a.dateAdded||'');
+    if (currentSort === 'room') return (a.room||'').localeCompare(b.room||'');
+    return 0;
+  });
+  return r;
+}
+
+function fmtVal(v) {
+  if (!v && v !== 0) return '—';
+  return '$' + Number(v).toLocaleString('en-AU', {maximumFractionDigits:0});
+}
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function renderList() {
+  const filtered = getFiltered();
+  const totalVal = items.reduce((s,i) => s+(Number(i.value)||0), 0);
+  const rooms = new Set(items.map(i=>i.room).filter(Boolean));
+
+  document.getElementById('sTotal').textContent = items.length;
+  document.getElementById('sValue').textContent = totalVal >= 1000
+    ? '$' + (totalVal/1000).toFixed(1) + 'k'
+    : fmtVal(totalVal);
+  document.getElementById('sRooms').textContent = rooms.size;
+  document.getElementById('resultsLbl').textContent =
+    filtered.length === items.length
+      ? `${items.length} item${items.length!==1?'s':''}`
+      : `${filtered.length} / ${items.length}`;
+
+  const list = document.getElementById('list');
+
+  if (!filtered.length) {
+    list.innerHTML = `<div class="empty">
+      <div class="empty-icon">${items.length===0?'🏠':'🔍'}</div>
+      <div class="empty-title">${items.length===0?'No items yet':'No results'}</div>
+      <div class="empty-sub">${items.length===0?'Tap + to add your first item.':'Try a different search or filter.'}</div>
+    </div>`;
+    return;
+  }
+
+  if (currentFilter === 'all' && !currentSearch) {
+    const byRoom = {};
+    filtered.forEach(i => { const r=i.room||'Other'; if(!byRoom[r]) byRoom[r]=[]; byRoom[r].push(i); });
+    list.innerHTML = Object.entries(byRoom).map(([room, ri]) =>
+      `<div class="section-label">${esc(room)} <span style="color:var(--text3);font-size:9px">${ri.length}</span></div>` +
+      ri.map(cardHTML).join('')
+    ).join('');
+  } else {
+    list.innerHTML = filtered.map(cardHTML).join('');
+  }
+}
+
+function cardHTML(item) {
+  const catKey = (item.category||'other').toLowerCase();
+  const emoji = CAT_EMOJI[item.category] || '📦';
+  const thumb = item.photo
+    ? `<img src="${esc(item.photo)}" alt="">`
+    : emoji;
+  return `<div class="card" onclick="openDetail('${esc(item.id)}')">
+    <div class="card-accent acc-${catKey}"></div>
+    <div class="card-thumb">${thumb}</div>
+    <div class="card-body">
+      <div class="card-name">${esc(item.name)}</div>
+      <div class="card-tags">
+        <span class="tag tag-room">${esc(item.room||'—')}</span>
+        <span class="tag tag-cat">${esc(item.category||'—')}</span>
+      </div>
+      ${item.serial ? `<div class="card-serial">${esc(item.serial)}</div>` : ''}
+    </div>
+    ${item.value ? `<div class="card-value">${fmtVal(item.value)}</div>` : ''}
+  </div>`;
+}
+
+// ── Filter / search / sort ──
+function setFilter(f, el) {
+  currentFilter = f;
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  renderList();
+}
+function handleSearch(v) {
+  currentSearch = v;
+  document.getElementById('searchClear').style.display = v ? 'block' : 'none';
+  renderList();
+}
+function clearSearch() {
+  document.getElementById('searchInput').value = '';
+  handleSearch('');
+}
+function setSort(v) { currentSort = v; renderList(); }
+
+// ── Add / Edit ──
+function openAdd() {
+  editingId = null; photoData = null;
+  document.getElementById('addTitle').textContent = 'New item';
+  document.getElementById('deleteBtn').style.display = 'none';
+  document.getElementById('fName').value = '';
+  document.getElementById('fRoom').value = '';
+  document.getElementById('fCat').value = '';
+  document.getElementById('fValue').value = '';
+  document.getElementById('fDate').value = new Date().toISOString().split('T')[0];
+  document.getElementById('fBrand').value = '';
+  document.getElementById('fSerial').value = '';
+  document.getElementById('fNotes').value = '';
+  document.getElementById('photoPrev').style.display = 'none';
+  openOverlay('addOverlay');
+}
+
+function openEdit(id) {
+  const item = items.find(i => i.id === id);
+  if (!item) return;
+  editingId = id; photoData = item.photo || null;
+  document.getElementById('addTitle').textContent = 'Edit item';
+  document.getElementById('deleteBtn').style.display = 'block';
+  document.getElementById('fName').value = item.name||'';
+  document.getElementById('fRoom').value = item.room||'';
+  document.getElementById('fCat').value = item.category||'';
+  document.getElementById('fValue').value = item.value||'';
+  document.getElementById('fDate').value = item.date||'';
+  document.getElementById('fBrand').value = item.brand||'';
+  document.getElementById('fSerial').value = item.serial||'';
+  document.getElementById('fNotes').value = item.notes||'';
+  const prev = document.getElementById('photoPrev');
+  if (item.photo) { prev.src = item.photo; prev.style.display = 'block'; }
+  else prev.style.display = 'none';
+  closeOverlay('detailOverlay');
+  openOverlay('addOverlay');
+}
+
+async function saveItem() {
+  const name = document.getElementById('fName').value.trim();
+  const room = document.getElementById('fRoom').value;
+  const cat  = document.getElementById('fCat').value;
+  if (!name) { showToast('Please enter an item name'); return; }
+  if (!room) { showToast('Please select a room'); return; }
+  if (!cat)  { showToast('Please select a category'); return; }
+
+  const data = {
+    name, room, category: cat,
+    value: parseFloat(document.getElementById('fValue').value)||0,
+    date: document.getElementById('fDate').value,
+    brand: document.getElementById('fBrand').value.trim(),
+    serial: document.getElementById('fSerial').value.trim(),
+    notes: document.getElementById('fNotes').value.trim(),
+    photo: photoData||'',
+    dateAdded: new Date().toISOString(),
+  };
+
+  if (editingId) {
+    const idx = items.findIndex(i => i.id === editingId);
+    if (idx > -1) items[idx] = { ...items[idx], ...data, dateAdded: items[idx].dateAdded };
+    showToast('Item updated');
+  } else {
+    items.push({ id: genId(), ...data });
+    showToast('Item added ✓');
+  }
+
+  closeOverlay('addOverlay');
+  renderList();
+  await writeAllToSheet();
+}
+
+async function deleteItem() {
+  if (!confirm('Delete this item? This cannot be undone.')) return;
+  items = items.filter(i => i.id !== editingId);
+  closeOverlay('addOverlay');
+  renderList();
+  showToast('Item deleted');
+  await writeAllToSheet();
+}
+
+// ── Detail ──
+function openDetail(id) {
+  const item = items.find(i => i.id === id);
+  if (!item) return;
+  document.getElementById('detailSheetTitle').textContent = item.name;
+  const fields = [
+    ['Room', item.room],
+    ['Category', item.category],
+    ['Est. value', fmtVal(item.value)],
+    ['Brand / Make', item.brand],
+    ['Serial / Model', item.serial],
+    ['Purchase date', item.date],
+    ['Notes', item.notes],
+    ['Added', item.dateAdded ? new Date(item.dateAdded).toLocaleDateString('en-AU') : null],
+  ].filter(([,v]) => v);
+
+  document.getElementById('detailBody').innerHTML = `
+    ${item.photo ? `<img src="${esc(item.photo)}" class="detail-img" style="display:block">` : ''}
+    <div class="detail-name">${esc(item.name)}</div>
+    ${item.value ? `<div class="detail-value">${fmtVal(item.value)}</div>` : ''}
+    ${fields.map(([l,v]) => `
+      <div class="detail-row">
+        <span class="detail-lbl">${esc(l)}</span>
+        <span class="detail-val">${esc(v)}</span>
+      </div>`).join('')}
+    <button class="btn btn-primary" style="margin-top:20px" onclick="openEdit('${esc(item.id)}')">Edit item</button>
+    <button class="btn btn-ghost" onclick="closeOverlay('detailOverlay')">Close</button>
+  `;
+  openOverlay('detailOverlay');
+}
+
+// ── Photo ──
+function handlePhoto(input) {
+  const file = input.files[0]; if (!file) return;
+  // Resize to max 800px before storing
+  const reader = new FileReader();
+  reader.onload = e => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      const max = 800;
+      let w = img.width, h = img.height;
+      if (w > max) { h = h*(max/w); w = max; }
+      if (h > max) { w = w*(max/h); h = max; }
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      photoData = canvas.toDataURL('image/jpeg', 0.8);
+      const prev = document.getElementById('photoPrev');
+      prev.src = photoData; prev.style.display = 'block';
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+// ── Export ──
+function exportCSV() {
+  const hdr = ['Name','Room','Category','Value','Brand','Serial','Purchase Date','Notes'];
+  const rows = items.map(i =>
+    [i.name,i.room,i.category,i.value,i.brand,i.serial,i.date,i.notes]
+      .map(v => `"${String(v||'').replace(/"/g,'""')}"`)
+  );
+  const csv = [hdr,...rows].map(r=>r.join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+  a.download = `home-assets-${new Date().toISOString().split('T')[0]}.csv`;
+  a.click();
+  showToast('CSV exported');
+}
+
+// ── Helpers ──
+function genId() { return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+function show(id) { document.getElementById(id).style.display = 'flex'; }
+function hide(id) { document.getElementById(id).style.display = 'none'; }
+function openOverlay(id) {
+  document.getElementById(id).classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeOverlay(id) {
+  document.getElementById(id).classList.remove('open');
+  document.body.style.overflow = '';
+}
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2400);
+}
+function showAuthError(msg) {
+  const el = document.getElementById('authError');
+  el.textContent = msg; el.style.display = msg ? 'block' : 'none';
+}
+function toggleMenu() {
+  document.getElementById('userMenu').classList.toggle('open');
+}
+
+// Close overlays on backdrop tap
+document.querySelectorAll('.overlay').forEach(o => {
+  o.addEventListener('click', e => { if (e.target === o) closeOverlay(o.id); });
+});
+// Close user menu on outside tap
+document.addEventListener('click', e => {
+  const menu = document.getElementById('userMenu');
+  const av = document.getElementById('userAvatar');
+  if (menu.classList.contains('open') && !menu.contains(e.target) && e.target !== av) {
+    menu.classList.remove('open');
+  }
+});
+</script>
+</body>
+</html>
